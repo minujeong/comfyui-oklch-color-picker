@@ -1,3 +1,4 @@
+import comfy.model_management
 from PIL import Image
 import torch
 from torchvision import transforms
@@ -43,8 +44,8 @@ def hue_lerp_short(h0, h1, t):
 required = {
     "candidates": ("STRING", {"multiline": True, "default": "red,green,blue"}),
     "count": ("INT", {"default": 3}),
-    "lch0": ("TUPLE", {"default": (0.5, 0.2, 0.0)}),
-    "lch1": ("TUPLE", {"default": (0.5, 0.2, 0.0)}),
+    "lch0": ("TUPLE",),
+    "lch1": ("TUPLE",),
 }
 
 
@@ -63,7 +64,8 @@ class OKLCHPicker:
 
     def _load_clip(self):
         if OKLCHPicker._clip_model is None:
-            OKLCHPicker._clip_model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
+            device = comfy.model_management.get_torch_device()
+            OKLCHPicker._clip_model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32").to(device)
             OKLCHPicker._clip_proc = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
         return OKLCHPicker._clip_model, OKLCHPicker._clip_proc
 
@@ -88,7 +90,7 @@ class OKLCHPicker:
         model, processor = self._load_clip()
 
         candidates_split = [x.strip() for x in candidates.split(",") if x.strip()]
-        inputs = processor(text=candidates_split, images=img, return_tensors="pt", padding=True)
+        inputs = processor(text=candidates_split, images=img, return_tensors="pt", padding=True).to(model.device)
         with torch.no_grad():
             outputs = model(**inputs)
         scores = outputs.logits_per_image[0]

@@ -1,0 +1,16 @@
+[project]
+name = "oklch-color-picker"
+description = ""
+version = "1.0.1"
+license = {text = "MIT"} 
+
+[project.urls]
+Repository = "https://github.com/minujeong/comfyui-oklch-color-picker"
+Documentation = "https://github.com/minujeong/comfyui-oklch-color-picker/wiki"
+"Bug Tracker" = "https://github.com/minujeong/comfyui-oklch-color-picker/issues"
+
+[tool.comfy]
+PublisherId = "minujeong"
+DisplayName = "comfyui-oklch-color-picker"
+Icon = ""
+includes = [] 
